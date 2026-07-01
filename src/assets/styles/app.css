@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+@import './tailwind/index.css';
+@import './components/index.css';
+@import './template/index.css';
+@import './vendors/index.css';
+
+@media (min-width: 769px) {
+    .gslide-image img {
+        max-height: 55vh !important;
+        max-width: 100%;
+    }
+}
+
+input[type="password"]::-ms-reveal {
+    display: none;
+}
+
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.sun-editor {
+    border-radius: 12px;
+}
+
+.sun-editor .se-toolbar {
+    border-radius: 12px 12px 0px 0px;
+    padding: 5px !important;
+}
+
+.sun-editor .se-resizing-bar {
+    border-radius: 0px 0px 12px 12px;
+    padding-left: 15px !important;
+}
+
+/* .custom-datepicker input {
+    @apply focus:ring-1 focus:ring-primary focus:outline-none;
+} */
