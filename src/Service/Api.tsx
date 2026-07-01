@@ -1,4 +1,4 @@
-const BASE_URL = "https://app.zenpath-admin.com:5000";
+const BASE_URL = "https://ab4f-2405-201-2024-a1aa-717d-469e-9881-9825.ngrok-free.app";
 // export const IMG_URL = "https://app.zenpath-admin.com:5000/";
 // const BASE_URL = "http://18.144.5.196:5000";
 // export const IMG_URL = "http://18.144.5.196:5000/";
