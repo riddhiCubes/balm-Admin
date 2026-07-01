@@ -10,7 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
-import { TbPencil, TbSearch, TbTrash } from 'react-icons/tb';
+import { TbSearch } from 'react-icons/tb';
+import { LuPencil, LuTrash2 } from 'react-icons/lu';
 import { z, ZodType } from 'zod';
 import Avatar from '@/components/ui/Avatar/Avatar';
 import { PiCheckBold, PiUser } from 'react-icons/pi';
@@ -390,25 +391,25 @@ const SubCategory = () => {
             cell: ({ row }: { row: any }) => {
                 const data = row?.original;
                 return (
-                    <div className="flex gap-3.5">
+                    <div className="flex items-center gap-2">
                         <Tooltip title="Edit">
                             <div
-                                className={`text-xl cursor-pointer select-none font-semibold`}
+                                className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-primary hover:bg-primary/20 transition-colors cursor-pointer select-none"
                                 role="button"
                                 onClick={() => {
                                     handleEditcategory(data);
                                 }}
                             >
-                                <TbPencil />
+                                <LuPencil className="text-lg" />
                             </div>
                         </Tooltip>
                         <Tooltip title="Delete">
                             <div
-                                className={`text-xl cursor-pointer select-none font-semibold`}
+                                className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors cursor-pointer select-none"
                                 role="button"
                                 onClick={() => handleDelete(data)}
                             >
-                                <TbTrash className='text-red-500' />
+                                <LuTrash2 className="text-lg" />
                             </div>
                         </Tooltip>
                     </div>

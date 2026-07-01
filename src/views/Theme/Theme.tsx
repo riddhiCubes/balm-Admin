@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AdaptiveCard, ConfirmDialog, Container } from '@/components/shared';
-import { TbEye, TbPencil, TbSearch, TbTrash } from 'react-icons/tb';
+import { TbSearch } from 'react-icons/tb';
+import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 import { Button, Card, Checkbox, Dropdown, Input, Notification, Pagination, Skeleton, Switcher, toast } from '@/components/ui';
 import { useNavigate } from 'react-router-dom';
 import EllipsisButton from '@/components/shared/EllipsisButton';
@@ -140,14 +141,14 @@ const Theme = () => {
     return (
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1 cursor-pointer select-none font-semibold" role="button" onClick={onView}>
-          <TbEye size={20} /> <p>View</p>
+          <LuEye size={20} /> <p>View</p>
         </div>
         <div className="flex gap-3">
           <div className="flex items-center gap-1 cursor-pointer select-none font-semibold " role="button" onClick={onEdit}>
-            <TbPencil size={20} /> Edit
+            <LuPencil size={20} /> Edit
           </div>
           <div className="flex items-center gap-1 cursor-pointer select-none font-semibold text-red-500" role="button" onClick={onDelete}>
-            <TbTrash size={20} /> <p>Delete</p>
+            <LuTrash2 size={20} /> <p>Delete</p>
           </div>
         </div>
       </div>
@@ -266,7 +267,7 @@ const Theme = () => {
                             onClick={() => handleView(item)}
                           >
                             <span className="text-lg">
-                              <TbEye />
+                              <LuEye />
                             </span>
                             <span>View</span>
                           </Dropdown.Item>
@@ -275,7 +276,7 @@ const Theme = () => {
                             onClick={() => handleEdit(item)}
                           >
                             <span className="text-lg">
-                              <TbPencil />
+                              <LuPencil />
                             </span>
                             <span>Edit</span>
                           </Dropdown.Item>
@@ -285,7 +286,7 @@ const Theme = () => {
                             className='text-red-500'
                           >
                             <span className="text-lg">
-                              <TbTrash />
+                              <LuTrash2 />
                             </span>
                             <span>Delete</span>
                           </Dropdown.Item>

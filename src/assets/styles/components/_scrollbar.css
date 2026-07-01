@@ -139,7 +139,7 @@
 			min-height: 10px;
 	}
 	.simplebar-scrollbar:before {
-			@apply absolute content-[''] bg-gray-400 rounded-xl left-0.5 right-0.5 opacity-0;
+			@apply absolute content-[''] bg-gray-300 rounded-xl left-0.5 right-0.5 opacity-0;
 			transition: opacity 0.2s 0.5s linear;
 	}
 	.simplebar-scrollbar.simplebar-visible:before {

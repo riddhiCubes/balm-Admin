@@ -11,9 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { CgUnblock } from 'react-icons/cg';
-import { MdBlock } from 'react-icons/md';
-import { TbEye, TbSearch, TbTrash } from 'react-icons/tb';
+import { LuEye, LuBan, LuShieldCheck, LuTrash2 } from 'react-icons/lu';
+import { TbSearch } from 'react-icons/tb';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { z, ZodType } from 'zod';
 import { useDebounce } from 'use-debounce';
@@ -324,32 +323,34 @@ const Users = () => {
             cell: ({ row }: { row: any }) => {
                 const data = row?.original;
                 return (
-                    <div className="flex gap-3.5">
+                    <div className="flex items-center gap-2">
                         <Tooltip title="View">
-                            <div className="cursor-pointer select-none font-semibold" role="button"
-                                onClick={(row) => handleView(data)}
+                            <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100 transition-colors cursor-pointer select-none" role="button"
+                                onClick={() => handleView(data)}
                             >
-                                <TbEye className="text-xl" />
+                                <LuEye className="text-lg" />
                             </div>
                         </Tooltip>
                         <Tooltip title={`${data?.isBlock ? "UnBlock" : "Block"}`}>
-                            <div className="text-xl cursor-pointer select-none font-semibold" role="button"
-                                onClick={() => {
-                                    if (data?.isBlock) {
-                                        handleUnBlock(data)
-                                    } else {
-                                        handleBlock(data);
-                                    }
-                                }}
-                            >
-                                {data?.isBlock ? <CgUnblock size={22} /> : <MdBlock size={20} />}
-                            </div>
+                            {data?.isBlock ? (
+                                <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-emerald-500 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer select-none" role="button"
+                                    onClick={() => handleUnBlock(data)}
+                                >
+                                    <LuShieldCheck className="text-lg" />
+                                </div>
+                            ) : (
+                                <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-colors cursor-pointer select-none" role="button"
+                                    onClick={() => handleBlock(data)}
+                                >
+                                    <LuBan className="text-lg" />
+                                </div>
+                            )}
                         </Tooltip>
                         <Tooltip title="Delete">
-                            <div className="text-xl cursor-pointer select-none font-semibold" role="button"
+                            <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors cursor-pointer select-none" role="button"
                                 onClick={() => handleDelete(data)}
                             >
-                                <TbTrash className="text-red-400" />
+                                <LuTrash2 className="text-lg" />
                             </div>
                         </Tooltip>
                     </div>
@@ -600,7 +601,7 @@ const Users = () => {
                         >
                             Cancel
                         </Button>
-                        <Button disabled={pending} loading={pending} variant="solid" type="submit" className='w-24 bg-red-500 text-white hover:bg-red-600'>
+                        <Button disabled={pending} loading={pending} variant="solid" type="submit" className='w-24 bg-none bg-red-500 text-white hover:bg-red-600'>
                             Delete
                         </Button>
                     </FormItem>

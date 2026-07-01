@@ -5,7 +5,8 @@ import { Button, Card, Checkbox, Dropdown, Input, Notification, Pagination, Sele
 import { deletemusic, editmusic, getmusiclist, getsubcategorylist } from '@/Service/ApiService';
 import { useEffect, useRef, useState } from 'react'
 import { PiStarFill } from 'react-icons/pi';
-import { TbEye, TbPencil, TbSearch, TbTrash } from 'react-icons/tb';
+import { TbSearch } from 'react-icons/tb';
+import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Music = () => {
@@ -302,7 +303,7 @@ const Music = () => {
                                                         onClick={() => handleView(item)}
                                                     >
                                                         <span className="text-lg">
-                                                            <TbEye />
+                                                            <LuEye />
                                                         </span>
                                                         <span>View</span>
                                                     </Dropdown.Item>
@@ -311,7 +312,7 @@ const Music = () => {
                                                         onClick={() => handleEdit(item)}
                                                     >
                                                         <span className="text-lg">
-                                                            <TbPencil />
+                                                            <LuPencil />
                                                         </span>
                                                         <span>Edit</span>
                                                     </Dropdown.Item>
@@ -321,7 +322,7 @@ const Music = () => {
                                                         className='text-red-500'
                                                     >
                                                         <span className="text-lg">
-                                                            <TbTrash />
+                                                            <LuTrash2 />
                                                         </span>
                                                         <span>Delete</span>
                                                     </Dropdown.Item>

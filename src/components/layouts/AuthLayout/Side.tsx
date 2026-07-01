@@ -1,7 +1,7 @@
 import { cloneElement } from 'react'
 import type { CommonProps } from '@/@types/common';
-import Loginlogo from "../../../assets/image/carwashlogo.png";
-import side_image from "../../../assets/images/Start Screen.png";
+
+const side_image = `${import.meta.env.BASE_URL}img/balm-logo/login-side.jpg`
 
 type SideProps = CommonProps
 

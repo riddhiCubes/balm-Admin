@@ -1,13 +1,13 @@
 @layer components {
   .menu-item {
-    @apply cursor-pointer font-semibold px-3 rounded-lg flex items-center w-full whitespace-nowrap gap-x-2 transition-colors duration-150 text-gray-600 dark:text-gray-400;
-  
+    @apply cursor-pointer font-semibold px-3 mb-1.5 rounded-xl flex items-center w-full whitespace-nowrap gap-x-2 transition-colors duration-150 text-gray-600 dark:text-gray-400;
+
     &.menu-item-hoverable {
-      @apply hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-700;
+      @apply hover:text-primary hover:bg-primary-subtle dark:hover:text-primary dark:hover:bg-primary-subtle;
     }
-  
+
     &.menu-item-active {
-      @apply text-primary hover:text-primary;
+      @apply bg-primary text-neutral shadow-sm shadow-primary/30 hover:text-neutral hover:bg-primary;
     }
   
     a {
@@ -38,14 +38,14 @@
   .contrast-dark {
     .menu-item {
       @apply text-gray-400;
-    
+
       &.menu-item-hoverable {
-        @apply hover:text-gray-100 hover:bg-gray-700;
+        @apply hover:text-primary hover:bg-primary-subtle;
       }
 
       &.menu-item-active {
-        @apply text-primary hover:text-primary;
-      } 
+        @apply bg-primary text-neutral shadow-sm shadow-primary/30 hover:text-neutral hover:bg-primary;
+      }
     }
 
     .menu-item-divider {

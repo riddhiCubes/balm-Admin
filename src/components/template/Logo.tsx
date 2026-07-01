@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import { APP_NAME } from '@/constants/app.constant'
 import type { CommonProps } from '@/@types/common';
-import logo from "../../assets/images/zenpath_logo.png";
+
+const logo = `${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`
 
 interface LogoProps extends CommonProps {
     type?: 'full' | 'streamline'
@@ -9,8 +9,6 @@ interface LogoProps extends CommonProps {
     imgClass?: string
     logoWidth?: number | string
 }
-
-const LOGO_SRC_PATH = '/img/logo/'
 
 const Logo = (props: LogoProps) => {
     const {
@@ -31,13 +29,14 @@ const Logo = (props: LogoProps) => {
             }}
         >
             <img
-                className={imgClass}
-                // src={`${LOGO_SRC_PATH}logo-${mode}-${type}.png`}
+                className={classNames(imgClass, 'rounded-lg')}
                 src={logo}
-                alt={`${APP_NAME} logo`}
+                alt="Balm logo"
             />
             {type === "full" && (
-                <h4 className=''>Zenpath</h4>
+                <h4 className="bg-gradient-to-r from-[#9949F3] to-[#C078F8] bg-clip-text text-transparent tracking-wide">
+                    Balm
+                </h4>
             )}
         </div>
     )

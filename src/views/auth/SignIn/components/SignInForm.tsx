@@ -169,6 +169,9 @@ const SignInForm = (props: SignInFormProps) => {
                     loading={isSubmitting}
                     variant="solid"
                     type="submit"
+                    customColorClass={() =>
+                        'bg-gradient-to-r from-[#9949F3] to-[#C078F8] text-neutral hover:opacity-90'
+                    }
                 >
                     {isSubmitting ? 'Signing in...' : 'Sign In'}
                 </Button>

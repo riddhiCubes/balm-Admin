@@ -123,9 +123,11 @@ const Button = (props: ButtonProps) => {
 
     const solidColor = () => {
         const btn = {
-            bgColor: active ? `bg-primary-deep` : `bg-primary`,
+            bgColor: active
+                ? `bg-gradient-to-r from-[#7C2FD6] to-[#9949F3]`
+                : `bg-gradient-to-r from-[#9949F3] to-[#C078F8]`,
             textColor: 'text-neutral',
-            hoverColor: active ? '' : `hover:bg-primary-mild`,
+            hoverColor: active ? '' : `hover:opacity-90`,
             activeColor: ``,
         }
         return getBtnColor(btn)

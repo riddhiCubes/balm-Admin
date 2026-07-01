@@ -50,9 +50,14 @@ const MobileNav = ({
                 <MobileNavToggle toggled={isOpen} />
             </div>
             <Drawer
-                title="Zenpath"
+                title={
+                    <span className="bg-gradient-to-r from-[#9949F3] to-[#C078F8] bg-clip-text text-transparent font-bold text-xl tracking-wide">
+                        Balm
+                    </span>
+                }
                 isOpen={isOpen}
-                bodyClass={classNames('p-0')}
+                headerClass={classNames('bg-[#FAF8FF] dark:bg-gray-800 border-[#EFE9FB] dark:border-gray-700')}
+                bodyClass={classNames('p-0 bg-[#FAF8FF] dark:bg-gray-800')}
                 width={330}
                 placement={direction === DIR_RTL ? 'right' : 'left'}
                 onClose={handleDrawerClose}

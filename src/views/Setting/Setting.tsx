@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import { PiCheckCircleFill } from 'react-icons/pi';
-import { TbPencil, TbTrash } from 'react-icons/tb';
+import { LuPencil, LuTrash2 } from 'react-icons/lu';
 import { z, ZodType } from 'zod';
 
 type FormSchema = {
@@ -210,7 +210,7 @@ const Setting = () => {
                                                         onClick={() => handleEditFeature(item)}
                                                     >
                                                         <span className="text-lg">
-                                                            <TbPencil />
+                                                            <LuPencil />
                                                         </span>
                                                         <span>Edit</span>
                                                     </Dropdown.Item>
@@ -220,7 +220,7 @@ const Setting = () => {
                                                         className='text-red-500'
                                                     >
                                                         <span className="text-lg">
-                                                            <TbTrash />
+                                                            <LuTrash2 />
                                                         </span>
                                                         <span>Delete</span>
                                                     </Dropdown.Item>

@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
 import { useAuth } from '@/auth'
 import type { JSX } from 'react';
-import carwashlogo from "../../assets/images/zenpath_logo.png";
+const carwashlogo = `${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`
 import { VscLock } from 'react-icons/vsc'
 import { logoutApi } from '@/Service/ApiService'
 import toast from 'react-hot-toast'

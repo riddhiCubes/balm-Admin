@@ -1,10 +1,8 @@
-import Logo from '@/components/template/Logo'
 import Alert from '@/components/ui/Alert'
 import SignInForm from './components/SignInForm'
 import OauthSignIn from './components/OauthSignIn'
 import ActionLink from '@/components/shared/ActionLink'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { useThemeStore } from '@/store/themeStore'
 
 type SignInProps = {
     signUpUrl?: string
@@ -19,18 +17,18 @@ export const SignInBase = ({
 }: SignInProps) => {
     const [message, setMessage] = useTimeOutMessage()
 
-    const mode = useThemeStore((state) => state.mode)
-
     return (
         <>
             <div className="mb-8 flex items-center gap-3">
-                <Logo
-                    type="streamline"
-                    mode={mode}
-                    imgClass="mx-auto"
-                    logoWidth={60}
+                <img
+                    src={`${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`}
+                    className="rounded-2xl"
+                    style={{ width: 60 }}
+                    alt="Balm logo"
                 />
-                <h3>Zenpath</h3>
+                <h3 className="bg-gradient-to-r from-[#a855f7] to-[#c084fc] bg-clip-text text-transparent tracking-wide">
+                    Balm
+                </h3>
             </div>
             <div className="mb-10">
                 <h2 className="mb-2">Welcome back!</h2>

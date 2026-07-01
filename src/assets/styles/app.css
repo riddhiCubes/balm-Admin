@@ -19,6 +19,36 @@ input[type="password"]::-ms-clear {
     display: none;
 }
 
+::selection {
+    background-color: var(--primary);
+    color: var(--neutral);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-300) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--gray-300);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary);
+}
+
 .sun-editor {
     border-radius: 12px;
 }

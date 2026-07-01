@@ -11,7 +11,8 @@ import { getsubscriberslist } from '@/Service/ApiService';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react'
-import { TbEye, TbSearch } from 'react-icons/tb';
+import { TbSearch } from 'react-icons/tb';
+import { LuEye } from 'react-icons/lu';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 
@@ -182,12 +183,12 @@ const Subscribers = () => {
       cell: ({ row }: { row: any }) => {
         const data = row?.original;
         return (
-          <div className="flex gap-3.5">
+          <div className="flex items-center gap-2">
             <Tooltip title="View">
-              <div className="cursor-pointer select-none font-semibold" role="button"
-                onClick={(row) => handleView(data)}
+              <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100 transition-colors cursor-pointer select-none" role="button"
+                onClick={() => handleView(data)}
               >
-                <TbEye className="text-xl" />
+                <LuEye className="text-lg" />
               </div>
             </Tooltip>
           </div>
