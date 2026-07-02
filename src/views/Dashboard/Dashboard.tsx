@@ -1,5 +1,5 @@
 import { AdaptiveCard, Container } from '@/components/shared';
-import { Card } from '@/components/ui';
+import { Card, Skeleton } from '@/components/ui';
 import classNames from '@/utils/classNames';
 import { useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format';
@@ -15,6 +15,7 @@ const StatisticCard = (props: any) => {
         icon,
         iconClass,
         onClick,
+        loading,
     } = props
 
     const navigate = useNavigate();
@@ -24,8 +25,17 @@ const StatisticCard = (props: any) => {
             className={classNames(
                 'p-4 rounded-2xl cursor-pointer ltr:text-left rtl:text-right transition duration-150 outline-hidden col-span-12 md:col-span-6 xl:col-span-4 bg-white dark:bg-gray-900 shadow-md',
             )}
-            onClick={onClick}
+            onClick={loading ? undefined : onClick}
         >
+            {loading ? (
+                <div className="flex gap-2 2xl:flex-row justify-between items-center relative h-24">
+                    <div className="flex flex-col gap-3">
+                        <Skeleton width={110} height={12} />
+                        <Skeleton width={70} height={26} />
+                    </div>
+                    <Skeleton variant="circle" width={48} height={48} />
+                </div>
+            ) : (
             <div className="flex gap-2 2xl:flex-row justify-between items-center relative h-24">
                 <div>
                     <div className="mb-4 text-sm font-semibold">{title}</div>
@@ -50,6 +60,7 @@ const StatisticCard = (props: any) => {
                     {icon}
                 </div>
             </div>
+            )}
         </button>
     )
 };
@@ -57,14 +68,18 @@ const StatisticCard = (props: any) => {
 const Dashboard = () => {
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState<any>({});
+    const [loading, setLoading] = useState<boolean>(true);
 
     const getDashbaordData = () => {
+        setLoading(true);
         getdashbaord()
             .then((res) => {
                 const data = res?.data?.data;
                 setDashboardData(data);
             }).catch(() => {
 
+            }).finally(() => {
+                setLoading(false);
             });
     };
 
@@ -85,6 +100,7 @@ const Dashboard = () => {
                     <h4 className='mb-3'>Users</h4>
                     <div className='grid grid-cols-12 gap-4 rounded-2xl'>
                         <StatisticCard
+                            loading={loading}
                             title="Total Users"
                             value={
                                 <NumericFormat
@@ -99,6 +115,7 @@ const Dashboard = () => {
                             onClick={() => handleNavigation('/admin/users')}
                         />
                         <StatisticCard
+                            loading={loading}
                             title="Total Users Block"
                             value={
                                 <NumericFormat
@@ -118,6 +135,7 @@ const Dashboard = () => {
                             }}
                         />
                         <StatisticCard
+                            loading={loading}
                             title="Total Users Premium"
                             value={
                                 <NumericFormat
@@ -137,6 +155,7 @@ const Dashboard = () => {
                     <h4 className='mb-3'>Overview</h4>
                     <div className='grid grid-cols-12 gap-4 rounded-2xl'>
                         <StatisticCard
+                            loading={loading}
                             title="Total Category"
                             value={
                                 <NumericFormat
@@ -151,6 +170,7 @@ const Dashboard = () => {
                             onClick={() => handleNavigation('/admin/category')}
                         />
                         <StatisticCard
+                            loading={loading}
                             title="Total Sub Category"
                             value={
                                 <NumericFormat
@@ -165,6 +185,7 @@ const Dashboard = () => {
                             onClick={() => handleNavigation('/admin/subcategory')}
                         />
                         <StatisticCard
+                            loading={loading}
                             title="Total Themes"
                             value={
                                 <NumericFormat
@@ -179,6 +200,7 @@ const Dashboard = () => {
                             onClick={() => handleNavigation('/admin/theme')}
                         />
                         <StatisticCard
+                            loading={loading}
                             title="Total Musics"
                             value={
                                 <NumericFormat

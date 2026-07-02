@@ -24,6 +24,18 @@ input[type="password"]::-ms-clear {
     color: var(--neutral);
 }
 
+@keyframes balm-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes balm-spin-reverse {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--gray-300) transparent;
