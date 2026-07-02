@@ -395,7 +395,7 @@ const NotificationSend = () => {
                     </div> */}
 
                     <Tabs value={selectedTab} onChange={handleTabChange} variant="pill" className=''>
-                        <TabList className='cursor-pointer transition duration-150 outline-hidden bg-white shadow-md flex flex-wrap items-center justify-center w-fit mx-auto p-2 rounded-full mt-3 mb-7'>
+                        <TabList className='cursor-pointer transition duration-150 outline-hidden bg-white dark:bg-gray-700 shadow-md flex flex-wrap items-center justify-center w-fit mx-auto p-2 rounded-full mt-3 mb-7'>
                             <TabNav value="tab1">Announcement</TabNav>
                             <TabNav value="tab2">Schedule Notification</TabNav>
                         </TabList>

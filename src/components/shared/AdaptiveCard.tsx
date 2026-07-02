@@ -13,6 +13,7 @@ const AdaptiveCard = (props: AdaptableCardProps) => {
     return (
         <Card
             className={classNames(
+                'dark:bg-[#3b2565]',
                 className,
                 adaptiveCardActive && 'border-none dark:bg-transparent',
             )}
