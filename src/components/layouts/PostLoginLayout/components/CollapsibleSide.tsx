@@ -2,6 +2,7 @@ import SideNav from '@/components/template/SideNav'
 import Header from '@/components/template/Header'
 import SideNavToggle from '@/components/template/SideNavToggle'
 import MobileNav from '@/components/template/MobileNav'
+import ModeToggle from '@/components/template/ModeToggle'
 import UserProfileDropdown from '@/components//template/UserProfileDropdown'
 import LayoutBase from '@/components//template/LayoutBase'
 import useResponsive from '@/utils/hooks/useResponsive'
@@ -29,6 +30,7 @@ const CollapsibleSide = ({ children }: CommonProps) => {
                         }
                         headerEnd={
                             <>
+                                <ModeToggle />
                                 <UserProfileDropdown hoverable={false} />
                             </>
                         }
