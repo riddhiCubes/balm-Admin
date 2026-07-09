@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { FormItem, Form } from '@/components/ui/Form'
@@ -16,7 +16,8 @@ import { loginApi } from '@/Service/ApiService'
 import { useNavigate } from 'react-router-dom'
 import { useSessionUser } from '@/store/authStore'
 import { Notification, toast } from '@/components/ui'
-
+import { getToken } from "firebase/messaging"
+import { messaging } from '@/firebase/firebase'
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
     passwordHint?: string | ReactNode
@@ -42,6 +43,7 @@ const SignInForm = (props: SignInFormProps) => {
     let deviceId: any = localStorage.getItem("deviceId");
     let deviceToken = localStorage.getItem("deviceToken");
     const [isSubmitting, setSubmitting] = useState<boolean>(false)
+    const [fcmToken, setFcmToken] = useState("");
     const setSessionSignedIn = useSessionUser(
         (state) => state.setSessionSignedIn,
     )
@@ -89,7 +91,7 @@ const SignInForm = (props: SignInFormProps) => {
                 email: email,
                 password: password,
                 device_id: deviceId,
-                device_token: deviceToken,
+                device_token: fcmToken || deviceToken,
                 device_type: "web"
             }
 
@@ -118,6 +120,59 @@ const SignInForm = (props: SignInFormProps) => {
 
         // setSubmitting(false)
     }
+
+    const requestPermissionAndGetToken = async () => {
+    try {
+      const notificationsSupported = typeof window !== 'undefined' && 'Notification' in window;
+      const swSupported = typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
+      if (!notificationsSupported || !swSupported) {
+        console.warn("Notifications or Service Worker not supported in this browser.");
+        setFcmToken("");
+        return null;
+      }
+
+      const permission = await window.Notification.requestPermission();
+      if (permission !== "granted") {
+        console.log("Notification permission not granted (", permission, ")");
+        setFcmToken("");
+        return null;
+      }
+
+      let registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        try {
+          registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        } catch (swError) {
+          console.error("Failed to register service worker for FCM:", swError);
+          setFcmToken("");
+          return null;
+        }
+      }
+
+      if (!messaging) {
+        console.warn("Firebase messaging is not initialized.");
+        setFcmToken("");
+        return null;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: "BI1U2sCQKaJv-ST_OjRymW_dbLZPzBjH_k4FvY5qzU8rQv-fcd8afKypFlIiKxMWDq-UZ5W_k7p9QdJiJ542-f3",
+        serviceWorkerRegistration: registration,
+      });
+      console.log("FCM Token:", token);
+      setFcmToken(token || "");
+      return token;
+    } catch (error) {
+      console.error("Error getting FCM token:", error);
+      setFcmToken("");
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    requestPermissionAndGetToken();
+  }, []);
+
 
     return (
         <div className={className}>

@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
 import { useAuth } from '@/auth'
 import type { JSX } from 'react';
-const carwashlogo = `${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`
+const balmLogo = `${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`
 import { VscLock } from 'react-icons/vsc'
 import { logoutApi } from '@/Service/ApiService'
 import toast from 'react-hot-toast'
@@ -62,17 +62,17 @@ const _UserDropdown = () => {
             toggleClassName="flex items-center"
             renderTitle={
                 <div className="cursor-pointer flex items-center">
-                    <Avatar size={40} src={carwashlogo} />
+                    <Avatar size={40} src={balmLogo} />
                 </div>
             }
             placement="bottom-end"
         >
             {/* <Dropdown.Item variant="header">
                 <div className="py-2 px-3 flex items-center gap-3">
-                    <Avatar src={carwashlogo} />
+                    <Avatar src={balmLogo} />
                     <div>
                         <div className="font-bold text-gray-900 dark:text-gray-100">
-                            Car Wash Admin
+                            Balm Admin
                         </div>
                     </div>
                 </div>

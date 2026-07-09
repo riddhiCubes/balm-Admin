@@ -1,24 +1,37 @@
-# Ecme - The Ultimate React, Vite & TypeScript Web Template
+# Balm Admin
 
-Ecme  is a modern and responsive admin dashboard template built with React and TypeScript. Designed to provide a highly customizable and easy-to-use platform for building admin interfaces, it includes a variety of reusable components, pre-designed pages, and dynamic features. 
+Balm Admin is the admin panel for the Balm music app, built with React, Vite and TypeScript. It provides management for users, categories, sub-categories, themes, music, subscribers, notifications and app settings.
 
-This template is perfect for developing dashboards, web applications, CRM systems, e-commerce backends, and more. Whether you're building a small-scale admin panel or a large-scale enterprise application, Ecme is designed to be flexible and scalable.
+## Tech stack
 
-Key Features:
-- **Responsive Layout**: Optimized for all screen sizes and devices.
-- **Dark/Light Mode**: Easily switch between light and dark themes.
-- **Configurable Themes**: Personalize colors, layouts, and more to fit your needs.
-- **Built with React + TypeScript**: Ensures robust type-checking and fast development.
-- **Multi-Locale Support**: Easily add and manage multiple languages.
-- **RTL Support**: Full Right-to-Left support for languages like Arabic or Hebrew.
-- **Tailwind Component-Based Architecture**: Reusable components to streamline your development process.
-- **API Ready**: Simple integration with any RESTful API.
+- **React 19 + TypeScript** — type-safe, component-based UI
+- **Vite 6** — fast dev server and build tooling
+- **Tailwind CSS 4** — utility-first styling with light/dark theme support
+- **Zustand + Redux Toolkit** — state management
+- **Axios** — REST API integration
 
----
-### Demo
-Check out the [Live Demo](https://ecme-react.themenate.net/) to explore the template in action.
+## Getting started
 
+```bash
+# install dependencies
+npm install
 
-### Guide
-Please visit our [Online documentation](https://ecme-react.themenate.net/guide/documentation/introduction) for detailed guides, setup instructions, and customization options.
+# start the dev server
+npm run dev
 
+# build for production
+npm run build
+
+# preview the production build
+npm run preview
+```
+
+The app is served under the `/admin/` base path (e.g. `http://localhost:5173/admin/`).
+
+## Scripts
+
+- `npm run dev` — start the local dev server
+- `npm run build` — create a production build
+- `npm run preview` — preview the production build
+- `npm run lint` / `npm run lint:fix` — run ESLint
+- `npm run format` — run Prettier and ESLint fixes

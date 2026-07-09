@@ -1,7 +1,7 @@
 import { cloneElement } from 'react'
 import type { CommonProps } from '@/@types/common';
 
-const side_image = `${import.meta.env.BASE_URL}img/balm-logo/login-side.jpg`
+const side_image = `${import.meta.env.BASE_URL}img/balm-logo/login-side-4.svg`
 
 type SideProps = CommonProps
 
@@ -21,7 +21,7 @@ const Side = ({ children, ...rest }: SideProps) => {
 
                 <img
                     src={side_image}
-                    className="absolute h-full w-full top-0 rounded-3xl left-0"
+                    className="absolute h-full w-full top-0 rounded-3xl left-0 object-cover"
                 />
                 {/* <div className="absolute inset-0 bg-black opacity-50 rounded-3xl" /> */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
