@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { LuSun, LuMoon } from 'react-icons/lu'
+import { PiSunDuotone, PiMoonStarsDuotone } from 'react-icons/pi'
 import useDarkMode from '@/utils/hooks/useDarkMode'
 
 const ModeToggle = () => {
@@ -14,13 +14,30 @@ const ModeToggle = () => {
             className={classNames(
                 'header-action-item',
                 'header-action-item-hoverable',
-                'text-xl',
+                'dark:bg-[#4a2f7a] dark:hover:bg-[#573a8c]',
             )}
             role="button"
             onClick={toggle}
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-            {isDark ? <LuSun /> : <LuMoon />}
+            <div className="relative h-6 w-6 text-2xl">
+                <PiSunDuotone
+                    className={classNames(
+                        'absolute inset-0 transition-all duration-300 ease-out text-amber-400 dark:text-white',
+                        isDark
+                            ? 'opacity-100 rotate-0 scale-100'
+                            : 'opacity-0 -rotate-90 scale-0',
+                    )}
+                />
+                <PiMoonStarsDuotone
+                    className={classNames(
+                        'absolute inset-0 transition-all duration-300 ease-out text-violet-500 dark:text-violet-400',
+                        isDark
+                            ? 'opacity-0 rotate-90 scale-0'
+                            : 'opacity-100 rotate-0 scale-100',
+                    )}
+                />
+            </div>
         </div>
     )
 }
