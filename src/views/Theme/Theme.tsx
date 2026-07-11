@@ -237,7 +237,7 @@ const Theme = () => {
               <>
                 <div className='grid grid-cols-12 gap-5 mt-5'>
                   {themesData?.map((item: any, index: any) => (
-                    <Card key={index} className='2xl:col-span-3 xl:col-span-4 md:col-span-6 col-span-12 '
+                    <Card key={index} className='2xl:col-span-3 xl:col-span-4 md:col-span-6 col-span-12 dark:bg-[#573a8c] dark:border-[#6d51a6]'
                     // footer={{
                     //   content: <FooterConent
                     //     onDelete={() => handleDelete(item)}

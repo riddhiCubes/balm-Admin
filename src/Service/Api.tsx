@@ -1,7 +1,4 @@
-const BASE_URL = "https://app.zenpath-admin.com:5000";
-// export const IMG_URL = "https://app.zenpath-admin.com:5000/";
-// const BASE_URL = "http://18.144.5.196:5000";
-// export const IMG_URL = "http://18.144.5.196:5000/";
+const BASE_URL = "http://16.170.15.140/api";
 
 export const LOGIN_API = BASE_URL + "/admin_login";
 

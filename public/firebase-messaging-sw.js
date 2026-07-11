@@ -6,13 +6,13 @@ importScripts(
 );
 
 firebase.initializeApp({
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
+    apiKey: "abc",
+    authDomain: "abc",
+    projectId: "abc",
+    storageBucket: "abc",
+    messagingSenderId: "abc",
+    appId: "abc",
+    measurementId: "abc"
 });
 
 const messaging = firebase.messaging();

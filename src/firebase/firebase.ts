@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, type Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
+    apiKey: "abc",
+    authDomain: "abc",
+    projectId: "abc",
+    storageBucket: "abc",
+    messagingSenderId: "abc",
+    appId: "abc",
+    measurementId: "abc"
 };
 
 const app = initializeApp(firebaseConfig);
