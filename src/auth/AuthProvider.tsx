@@ -43,7 +43,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     )
     const { setToken } = useToken()
 
-    const admintoken = localStorage.getItem("zenpath_token");
+    const admintoken = localStorage.getItem("Balm_token");
     useEffect(() => {
         if (admintoken) {
             setSessionSignedIn(true);

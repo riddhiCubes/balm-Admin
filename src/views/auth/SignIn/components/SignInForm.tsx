@@ -107,7 +107,7 @@ const SignInForm = (props: SignInFormProps) => {
                         setSessionSignedIn(true);
                     }
                     setSubmitting(false);
-                    localStorage.setItem("zenpath_token", res?.data?.usertoken);
+                    localStorage.setItem("Balm_token", res?.data?.usertoken);
                 }).catch((err) => {
                     const errormsg = err?.response?.data?.message;
                     toast.push(

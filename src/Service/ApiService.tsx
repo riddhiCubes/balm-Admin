@@ -4,7 +4,7 @@ import type { AxiosProgressEvent } from "axios";
 
 axios.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("zenpath_token");
+        const token = localStorage.getItem("Balm_token");
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
         }
