@@ -30,7 +30,12 @@ export const SignInBase = ({
                 </h3>
             </div>
             <div className="mb-10">
-                <h2 className="mb-2">Welcome back!</h2>
+                <h2 className="mb-2">
+                    Welcome{' '}
+                    <span className="bg-gradient-to-r from-[#9949F3] to-[#C078F8] bg-clip-text text-transparent">
+                        back!
+                    </span>
+                </h2>
                 <p className="font-semibold heading-text">
                     Please enter your credentials to sign in!
                 </p>
