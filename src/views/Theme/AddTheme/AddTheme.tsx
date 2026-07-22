@@ -2,6 +2,8 @@ import { AdaptiveCard, Container } from '@/components/shared'
 import { Button, Card, Checkbox, Form, FormItem, Input, Notification, toast, Upload } from '@/components/ui'
 import IconButton from '@/components/ui/IconButton'
 import { addthemes, edittheme } from '@/Service/ApiService'
+import { USE_DIRECT_UPLOAD } from '@/configs/featureFlags'
+import { uploadAll } from '@/Service/uploadService'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -106,6 +108,7 @@ const AddTheme = () => {
   const [imagePreview, setImagePreview] = useState<any>(null);
   const [videoPreview, setVideoPreview] = useState<any>(null);
   const [pending, setPending] = useState(false);
+  const [progressPercent, setProgressPercent] = useState<number>(0);
 
   const handleCancel = () => {
     reset();
@@ -172,8 +175,122 @@ const AddTheme = () => {
     resolver: zodResolver(validationSchema),
   });
 
+  // Direct-to-S3 + transcode flow (VOD). Uploads any newly picked media straight
+  // to S3, waits for HLS transcoding, then saves the theme with the final URLs +
+  // `<field>_dataType="processed"`. Unchanged media (existing URL on edit) is
+  // omitted so the backend keeps the current value. See docs/vod/*.md §13.
+  const onSubmitDirect = async (values: FormSchema) => {
+    const hexToArgb = (hex: string) => {
+      return `0xff${hex.replace('#', '').toUpperCase()}`;
+    };
+
+    // 1) Gather only the fields the admin actually picked a NEW File for.
+    const fileMap: Record<string, File> = {};
+    if (values.Theme_music instanceof File) {
+      fileMap.Theme_music = values.Theme_music;
+    }
+    if (values.Theme_video instanceof File) {
+      fileMap.Theme_video = values.Theme_video;
+    }
+    if (values.Theme_image instanceof File) {
+      fileMap.Theme_image = values.Theme_image;
+    }
+
+    // 2) Upload them all to S3 and wait for transcoding.
+    let urls: Record<string, string> = {};
+    if (Object.keys(fileMap).length > 0) {
+      setProgressPercent(0);
+      try {
+        urls = await uploadAll(fileMap, undefined, (overall) => {
+          // Byte-accurate upload %. Capped at 99 until the theme is saved.
+          setProgressPercent(Math.min(99, overall));
+        });
+      } catch (err: any) {
+        toast.push(
+          <Notification type="danger">
+            {err?.message || "Media upload failed"}
+          </Notification>,
+          { placement: "top-end" }
+        );
+        setPending(false);
+        setProgressPercent(0);
+        return;
+      }
+    }
+
+    // 3) Build the save payload (same FormData shape the backend already reads).
+    const formData: any = new FormData();
+    if (data) {
+      formData.append("theme_id", data?.id);
+    }
+    formData.append("name", values?.name);
+
+    // Media: new upload -> processed URL; unchanged (edit) -> omit to keep existing.
+    const appendMedia = (field: 'Theme_music' | 'Theme_video' | 'Theme_image') => {
+      if (urls[field]) {
+        formData.append(field, urls[field]);
+        formData.append(`${field}_dataType`, "processed");
+      } else if (!data && typeof values[field] === 'string' && values[field]) {
+        // Add flow with a pasted URL string (legacy raw append, no _dataType).
+        formData.append(field, values[field] as string);
+      }
+      // Edit with unchanged media -> omit field + _dataType entirely.
+    };
+    appendMedia('Theme_music');
+    appendMedia('Theme_video');
+    appendMedia('Theme_image');
+
+    formData.append("isPremium", values?.isPremium);
+    formData.append("themeTopColor", hexToArgb(values?.themeTopColor));
+    formData.append("themeBottomColor", hexToArgb(values?.themeBottomColor));
+    formData.append("gradientColor", hexToArgb(values?.gradientColor));
+    formData.append("themeImageBGColor", hexToArgb(values?.themeImageBGColor));
+    formData.append("themeTaskbarColor", hexToArgb(values?.themeTaskbarColor));
+    formData.append("gradientColorOne", values?.themetoppercent_1);
+    formData.append("gradientColorTwo", values?.themetoppercent_2);
+    formData.append("gradientColorThree", values?.themetoppercent_3);
+
+    // 4) Save. Bytes are already on S3, so this call is small.
+    setProgressPercent(99);
+    const request = data ? edittheme(formData) : addthemes(formData);
+    request
+      .then((res: any) => {
+        if (res?.status === 201) {
+          setProgressPercent(100);
+          const successmsg = res?.data?.message;
+          toast.push(
+            <Notification type="success">
+              {successmsg || (data ? "Theme update Sucessfully" : "Theme add Sucessfully")}
+            </Notification>,
+            { placement: "top-end" }
+          );
+          navigate("/admin/theme");
+        }
+        setPending(false);
+        reset();
+      })
+      .catch((err: any) => {
+        const errormsg = err?.response?.data?.message;
+        toast.push(
+          <Notification type="danger">
+            {errormsg || (data ? "Theme not update " : "Theme not add ")}
+          </Notification>,
+          { placement: "top-end" }
+        );
+        setPending(false);
+        setProgressPercent(0);
+      });
+  };
+
   const onSubmit = (values: FormSchema) => {
     setPending(true);
+
+    // NEW: direct-to-S3 upload + background transcoding (VOD). Behind a flag so
+    // the legacy multipart-through-API path below is untouched until verified.
+    if (USE_DIRECT_UPLOAD) {
+      onSubmitDirect(values);
+      return;
+    }
 
     const formData: any = new FormData();
 
@@ -430,7 +547,10 @@ const AddTheme = () => {
                   onChange={handleVideo}
                 >
                   {videoPreview ? (
-                    <div className="flex max-w-84 w-auto h-[250px] object-cover rounded-md">
+                    <div
+                      className="relative z-10 flex max-w-84 w-auto h-[250px] object-cover rounded-md"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {/* <video
                         className=""
                         src={videoPreview}
@@ -727,8 +847,10 @@ const AddTheme = () => {
             >
               Cancel
             </Button>
-            <Button disabled={pending} loading={pending} variant="solid" type="submit" className={`${pending ? 'w-auto' : 'w-24'}`}>
-              {data ? "Save" : "Submit"}
+            <Button disabled={pending} loading={pending} variant="solid" type="submit" className={`${pending ? 'w-40' : 'w-24'}`}>
+              {pending
+                ? (USE_DIRECT_UPLOAD ? `${progressPercent}%` : '')
+                : (data ? "Save" : "Submit")}
             </Button>
           </div>
         </Form>

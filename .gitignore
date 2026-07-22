@@ -25,3 +25,6 @@ build
 *.sln
 *.sw?
 .vite-cache/
+
+frontend-vod-implementation.md
+vod-api-for-web-team.md

@@ -53,3 +53,13 @@ export const GET_ABOUT_US = BASE_URL + "/get_about_us";
 export const ADD_ABOUT_US = BASE_URL + "/add_about";
 
 export const SUBSCRIBERS_DATA = BASE_URL + "/subcribed_user";
+
+// ---------------------------------------------------------------------------
+// VOD / direct-to-S3 media upload pipeline (see docs/vod/*.md)
+// These are ADDITIVE. Nothing uses them until a screen is wired behind the
+// USE_DIRECT_UPLOAD feature flag.
+// ---------------------------------------------------------------------------
+export const UPLOAD_START = BASE_URL + "/upload/start";
+export const UPLOAD_COMPLETE = BASE_URL + "/upload/complete";
+export const UPLOAD_STATUS = BASE_URL + "/upload/status"; // + "/:jobId"
+export const UPLOAD_ABORT = BASE_URL + "/upload/abort";

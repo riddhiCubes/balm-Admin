@@ -2,6 +2,8 @@ import { AdaptiveCard, Container } from '@/components/shared';
 import { Button, Card, Checkbox, Form, FormItem, Input, Notification, Select, TimeInput, toast, Upload } from '@/components/ui';
 import IconButton from '@/components/ui/IconButton';
 import { addmusic, editmusic, getsubcategorylist } from '@/Service/ApiService';
+import { USE_DIRECT_UPLOAD } from '@/configs/featureFlags';
+import { uploadAll } from '@/Service/uploadService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
@@ -243,9 +245,148 @@ const AddMusic = () => {
         resolver: zodResolver(validationSchema),
     });
 
+    // Direct-to-S3 + transcode flow. Uploads changed media straight to S3, waits
+    // for HLS transcoding, then saves the record with the final URLs +
+    // `<field>_dataType="processed"`. Unchanged media (existing URL on edit) is
+    // omitted so the backend keeps the current value. See docs/vod/*.md §13.
+    const onSubmitDirect = async (values: FormSchema) => {
+        // 1) Gather only the fields the admin actually picked a NEW File for.
+        const fileMap: Record<string, File> = {};
+        if (values.music_image instanceof File) {
+            fileMap.music_image = values.music_image;
+        }
+        if (values.with_music_type === 'file' && values.with_music instanceof File) {
+            fileMap.with_music = values.with_music;
+        }
+        if (values.only_voice_music_type === 'file' && values.only_voice_music instanceof File) {
+            fileMap.only_voice_music = values.only_voice_music;
+        }
+
+        // 2) Upload them all to S3 and wait for transcoding.
+        const fields = Object.keys(fileMap);
+        let urls: Record<string, string> = {};
+        if (fields.length > 0) {
+            try {
+                urls = await uploadAll(fileMap, undefined, (overall) => {
+                    // Byte-accurate upload %. Capped at 99 until the record is
+                    // saved (100 = fully done + persisted).
+                    setProgressPercent(Math.min(99, overall));
+                });
+            } catch (err: any) {
+                toast.push(
+                    <Notification type="danger">
+                        {err?.message || "Media upload failed"}
+                    </Notification>,
+                    { placement: "top-end" }
+                );
+                setPending(false);
+                setProgressPercent(0);
+                return;
+            }
+        }
+
+        // 3) Build the save payload (same FormData shape the backend already reads).
+        const formData: any = new FormData();
+        if (formValues?.id) {
+            formData.append("music_id", formValues?.id);
+        }
+        formData.append("title", values?.title);
+        formData.append("description", values?.description);
+        if (values?.with_music_duration) {
+            formData.append(
+                "with_music_duration",
+                moment(values.with_music_duration).format("HH:mm:ss")
+            );
+        }
+        if (values?.only_voice_music_duration) {
+            formData.append(
+                "only_voice_music_duration",
+                moment(values.only_voice_music_duration).format("HH:mm:ss")
+            );
+        }
+        formData.append("sub_category_id", String(values?.sub_category_id ?? ""));
+        formData.append("isPremium", values?.isPremium);
+
+        // Image: new upload -> processed URL; unchanged -> omit (keep existing).
+        if (urls.music_image) {
+            formData.append("music_image", urls.music_image);
+            formData.append("music_image_dataType", "processed");
+        }
+
+        // Only Voice audio (field name: with_music).
+        if (
+            values.with_music_type === 'url' &&
+            typeof values.with_music === 'string' &&
+            values.with_music
+        ) {
+            // Legacy "paste an s3:// path" flow — unchanged.
+            formData.append("with_music_dataType", "url");
+            formData.append("with_music_url", values.with_music);
+        } else if (urls.with_music) {
+            formData.append("with_music", urls.with_music);
+            formData.append("with_music_dataType", "processed");
+        }
+        // else: unchanged existing URL -> omit field + _dataType.
+
+        // With Music audio (field name: only_voice_music).
+        if (
+            values.only_voice_music_type === 'url' &&
+            typeof values.only_voice_music === 'string' &&
+            values.only_voice_music
+        ) {
+            formData.append("only_voice_music_dataType", "url");
+            formData.append("only_voice_music_url", values.only_voice_music);
+        } else if (urls.only_voice_music) {
+            formData.append("only_voice_music", urls.only_voice_music);
+            formData.append("only_voice_music_dataType", "processed");
+        }
+
+        // 4) Save. Bytes are already on S3, so this call is small — pin progress high.
+        setProgressPercent(99);
+        const noop = () => {};
+        const request = data ? editmusic(formData, noop) : addmusic(formData, noop);
+        request
+            .then((res: any) => {
+                if (res?.status === 200) {
+                    setProgressPercent(100);
+                    const successmsg = res?.data?.message;
+                    toast.push(
+                        <Notification type="success">
+                            {successmsg || "Music add Sucessfully"}
+                        </Notification>,
+                        { placement: "top-end" }
+                    );
+                    navigate("/admin/music");
+                }
+                setPending(false);
+                reset();
+            })
+            .catch((err: any) => {
+                const errormsg = err?.response?.data?.message;
+                toast.push(
+                    <Notification type="danger">
+                        {errormsg ||
+                            (data
+                                ? "Music not update Sucessfully"
+                                : "Music not add Sucessfully")}
+                    </Notification>,
+                    { placement: "top-end" }
+                );
+                setPending(false);
+                setProgressPercent(0);
+            });
+    };
+
     const onSubmit = (values: FormSchema) => {
         setPending(true);
         setProgressPercent(0);
+
+        // NEW: direct-to-S3 upload + background transcoding (VOD). Behind a flag so
+        // the legacy multipart-through-API path below is untouched until verified.
+        if (USE_DIRECT_UPLOAD) {
+            onSubmitDirect(values);
+            return;
+        }
 
         const formData: any = new FormData();
 
@@ -783,8 +924,8 @@ const AddMusic = () => {
                         </Button>
                         <Button disabled={pending} loading={pending} variant="solid" type="submit" className={`${pending ? 'w-40' : 'w-24'}`}>
                             {pending
-                                ? `${progressPercent}%`
-                                : ''}{data ? "Save" : "Submit"}
+                                ? (USE_DIRECT_UPLOAD ? `${progressPercent}%` : '')
+                                : (data ? "Save" : "Submit")}
                         </Button>
                     </div>
                 </Form>
