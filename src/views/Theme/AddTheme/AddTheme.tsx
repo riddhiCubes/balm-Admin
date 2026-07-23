@@ -49,7 +49,7 @@ const validationSchema: any = z.object({
   gradientColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/, { message: 'Enter a valid hex color' }),
   themeTaskbarColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/, { message: 'Enter a valid hex color' }),
   themeImageBGColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/, { message: 'Enter a valid hex color' }),
-  isPremium: z.boolean(),
+  isPremium: z.boolean().optional(),
   themetoppercent_1: z.preprocess((val) => {
     if (typeof val === "string") {
       if (val.trim() === "") return undefined;
@@ -240,7 +240,7 @@ const AddTheme = () => {
     appendMedia('Theme_video');
     appendMedia('Theme_image');
 
-    formData.append("isPremium", values?.isPremium);
+    formData.append("isPremium", values?.isPremium ?? false);
     formData.append("themeTopColor", hexToArgb(values?.themeTopColor));
     formData.append("themeBottomColor", hexToArgb(values?.themeBottomColor));
     formData.append("gradientColor", hexToArgb(values?.gradientColor));
@@ -313,7 +313,7 @@ const AddTheme = () => {
         formData.append("Theme_image", values.Theme_image);
       }
 
-      formData.append("isPremium", values?.isPremium);
+      formData.append("isPremium", values?.isPremium ?? false);
 
       formData.append("themeTopColor", hexToArgb(values?.themeTopColor));
       formData.append("themeBottomColor", hexToArgb(values?.themeBottomColor));
@@ -352,7 +352,7 @@ const AddTheme = () => {
       formData.append("Theme_music", values?.Theme_music);
       formData.append("Theme_video", values?.Theme_video);
       formData.append("Theme_image", values?.Theme_image);
-      formData.append("isPremium", values?.isPremium);
+      formData.append("isPremium", values?.isPremium ?? false);
       formData.append("themeTopColor", hexToArgb(values?.themeTopColor));
       formData.append("themeBottomColor", hexToArgb(values?.themeBottomColor));
       formData.append("gradientColor", hexToArgb(values?.gradientColor));
@@ -541,14 +541,14 @@ const AddTheme = () => {
                 <Upload
                   accept="video/*"
                   draggable
-                  className="min-h-[350px]"
+                  className="w-full min-h-[350px]"
                   showList={false}
                   uploadLimit={1}
                   onChange={handleVideo}
                 >
                   {videoPreview ? (
                     <div
-                      className="relative z-10 flex max-w-84 w-auto h-[250px] object-cover rounded-md"
+                      className="relative z-10 w-full max-w-full h-[250px] rounded-md"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {/* <video
@@ -561,7 +561,7 @@ const AddTheme = () => {
                         videoUrl={videoPreview}
                       />
                       <TbCircleXFilled
-                        className="text-red-500 text-lg z-20 -m-2.5"
+                        className="absolute -top-2 -right-2 text-red-500 text-lg z-20 cursor-pointer"
                         onClick={removeVideo}
                       />
                     </div>
@@ -707,20 +707,20 @@ const AddTheme = () => {
                 <Upload
                   accept="image/*"
                   draggable
-                  className="min-h-[250px]"
+                  className="w-full min-h-[250px]"
                   showList={false}
                   uploadLimit={1}
                   onChange={handleImg}
                 >
                   {imagePreview ? (
-                    <div className="flex">
+                    <div className="relative w-full">
                       <img
-                        className="max-w-84 w-auto h-[200px] object-cover rounded-md"
+                        className="w-full max-w-full h-[200px] object-cover rounded-md"
                         src={imagePreview}
                         alt="image preview"
                       />
                       <TbCircleXFilled
-                        className="text-red-500 text-lg z-20 -m-2.5"
+                        className="absolute -top-2 -right-2 text-red-500 text-lg z-20 cursor-pointer"
                         onClick={removeImg}
                       />
                     </div>

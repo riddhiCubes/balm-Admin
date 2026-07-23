@@ -156,7 +156,7 @@ const SignInForm = (props: SignInFormProps) => {
       }
 
       const token = await getToken(messaging, {
-        vapidKey: "BI1U2sCQKaJv-ST_OjRymW_dbLZPzBjH_k4FvY5qzU8rQv-fcd8afKypFlIiKxMWDq-UZ5W_k7p9QdJiJ542-f3",
+        vapidKey: "BCvMkMGNj7JF6Pc6C6k4Wv4d0R_vxnfly7OdfkKdhknf1GttCI9JSCFMOYyIOpA1NnaMCTusdOVKbE-F-axJgXM",
         serviceWorkerRegistration: registration,
       });
       console.log("FCM Token:", token);
