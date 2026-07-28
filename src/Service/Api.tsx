@@ -54,6 +54,10 @@ export const ADD_ABOUT_US = BASE_URL + "/add_about";
 
 export const SUBSCRIBERS_DATA = BASE_URL + "/subcribed_user";
 
+export const GET_NOTIFICATIONS = BASE_URL + "/list_notifications";
+export const READ_NOTIFICATION = BASE_URL + "/read_notification";
+export const READ_ALL_NOTIFICATIONS = BASE_URL + "/read_all_notifications";
+
 // ---------------------------------------------------------------------------
 // VOD / direct-to-S3 media upload pipeline (see docs/vod/*.md)
 // These are ADDITIVE. Nothing uses them until a screen is wired behind the

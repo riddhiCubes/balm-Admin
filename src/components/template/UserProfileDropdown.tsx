@@ -1,13 +1,13 @@
+import { useState } from 'react'
 import Avatar from '@/components/ui/Avatar'
 import Dropdown from '@/components/ui/Dropdown'
+import { ConfirmDialog } from '@/components/shared'
 import withHeaderItem from '@/utils/hoc/withHeaderItem'
 import { useSessionUser } from '@/store/authStore'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
-import { useAuth } from '@/auth'
 import type { JSX } from 'react';
 const balmLogo = `${import.meta.env.BASE_URL}img/balm-logo/app-icon.jpg`
-import { VscLock } from 'react-icons/vsc'
 import { logoutApi } from '@/Service/ApiService'
 import toast from 'react-hot-toast'
 import { LuKeyRound } from 'react-icons/lu'
@@ -28,14 +28,26 @@ const _UserDropdown = () => {
     );
     const device_id = localStorage.getItem("deviceId");
 
-    // const { signOut } = useAuth()
+    const [signOutDialog, setSignOutDialog] = useState(false)
+    const [signingOut, setSigningOut] = useState(false)
 
+    // Open the confirmation dialog instead of signing out immediately.
     const handleSignOut = () => {
-        // signOut();
+        setSignOutDialog(true)
+    }
+
+    const handleSignOutCancel = () => {
+        if (signingOut) return
+        setSignOutDialog(false)
+    }
+
+    // Actual sign-out, run only after the user confirms.
+    const handleSignOutConfirm = () => {
         const body = {
-            device_id:device_id
+            device_id: device_id
         };
 
+        setSigningOut(true)
         logoutApi(body)
             .then((res) => {
                 if (res?.status === 200) {
@@ -46,6 +58,9 @@ const _UserDropdown = () => {
             }).catch((err) => {
                 const errormsg = err?.response?.data?.message;
                 toast.error(errormsg || "");
+            }).finally(() => {
+                setSigningOut(false)
+                setSignOutDialog(false)
             })
     }
     const handleResetpassword = () => {
@@ -57,6 +72,7 @@ const _UserDropdown = () => {
     }
 
     return (
+        <>
         <Dropdown
             className="flex"
             toggleClassName="flex items-center"
@@ -114,6 +130,25 @@ const _UserDropdown = () => {
                 <span>Sign Out</span>
             </Dropdown.Item>
         </Dropdown>
+        <ConfirmDialog
+            isOpen={signOutDialog}
+            type="warning"
+            title="Sign Out"
+            onClose={handleSignOutCancel}
+            onRequestClose={handleSignOutCancel}
+            onCancel={handleSignOutCancel}
+            onConfirm={handleSignOutConfirm}
+            confirmText="Sign Out"
+            closable={false}
+            overlayClassName="flex items-center justify-center"
+            confirmButtonProps={{
+                loading: signingOut,
+                disabled: signingOut,
+            }}
+        >
+            <p>Are you sure you want to sign out of your account?</p>
+        </ConfirmDialog>
+        </>
     )
 }
 

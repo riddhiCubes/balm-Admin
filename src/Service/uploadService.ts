@@ -57,42 +57,20 @@ async function putWithRetry(
 const POLL_INTERVAL_MS = 4000;
 const POLL_TIMEOUT_MS = 15 * 60 * 1000; // 15 min cap (docs §9)
 
-// Progress is reported in TWO phases so the bar keeps moving during the (often
-// long) transcode step instead of freezing near 100%:
-//   byte upload  ->   0 .. UPLOAD_PHASE_PCT
-//   transcoding  ->   UPLOAD_PHASE_PCT .. 100  (driven by the `progress` field
-//                     the backend returns on /upload/status)
-// Images have no transcode step, so they jump straight to 100 on "ready".
-const UPLOAD_PHASE_PCT = 50;
-
 /**
  * Upload a single file end-to-end and resolve with its final, playable URL.
- * `onProgress` reports a single 0-100 value covering BOTH phases: byte upload
- * maps to 0..UPLOAD_PHASE_PCT, then transcoding maps to UPLOAD_PHASE_PCT..100
- * using the backend's `progress` field (so it never sits frozen at ~99%).
+ * `onProgress` reports a single 0-100 value that tracks the raw CHUNK/BYTE
+ * upload to S3 only (bytes transferred / file size). There is no transcode
+ * step in this flow, so the bar simply fills as the chunks upload.
  */
 export async function uploadMedia(
     file: File,
     onProgress: ProgressFn = () => {},
 ): Promise<UploadResult> {
-    // Map a raw byte-upload % (0-100) into the first phase (0..UPLOAD_PHASE_PCT).
+    // Report a raw byte-upload percentage (0-100) directly — the bar tracks the
+    // chunk upload progress, nothing else.
     const reportUpload = (bytesPct: number) =>
-        onProgress(
-            Math.round((Math.min(100, Math.max(0, bytesPct)) * UPLOAD_PHASE_PCT) / 100),
-        );
-    // Map a raw transcode % (0-100) into the second phase (UPLOAD_PHASE_PCT..100).
-    const reportTranscode = (transPct: number) =>
-        onProgress(
-            Math.min(
-                100,
-                Math.round(
-                    UPLOAD_PHASE_PCT +
-                        (Math.min(100, Math.max(0, transPct)) *
-                            (100 - UPLOAD_PHASE_PCT)) /
-                            100,
-                ),
-            ),
-        );
+        onProgress(Math.round(Math.min(100, Math.max(0, bytesPct))));
 
     // 1) start
     const start = await uploadApi(UPLOAD_START, {
@@ -155,69 +133,32 @@ export async function uploadMedia(
     );
 
     if (complete.mediaStatus === "ready") {
-        onProgress(100); // image (no transcode) — done.
+        onProgress(100); // done — no transcode step.
         return { url: complete.url, mediaType: start.mediaType };
     }
 
-    // 4) poll (audio / video transcoding). Drive the second half of the bar so
-    // it keeps moving instead of freezing near the end. We CANNOT rely on the
-    // backend's `progress` field alone: for small files transcoding finishes so
-    // fast that the very first /status response is already `progress:100 /
-    // ready`, with no in-between values — the bar would jump straight 50 -> 100.
-    //
-    // So we animate a synthetic "creep" on a timer that eases from 50 toward a
-    // ceiling (never reaching 100 on its own), and if the backend DOES report a
-    // higher real `progress`, we honor that instead. On "ready" we snap to 100.
+    // 4) fallback: if the backend still reports "processing" for a job, poll
+    // until it resolves. There is no transcode/m3u8 step anymore, so this simply
+    // waits for the final URL — the progress bar already sits at 100 (chunk
+    // upload complete) and is not driven by this loop.
     let s = complete;
     const startedAt = Date.now();
-
-    // Highest transcode % shown so far (monotonic — never goes backwards).
-    let transcodePct =
-        typeof complete.progress === "number" ? complete.progress : 0;
-    reportTranscode(transcodePct);
-
-    // The creep only advances the bar; it never reaches 100 (that's reserved for
-    // an actual "ready"), so the final snap to 100 always reads as "done".
-    const CREEP_CEIL = 95;
-    const creep = setInterval(() => {
-        // Asymptotic ease: cover a fraction of the remaining gap each tick, so
-        // it moves quickly at first then slows as it nears the ceiling.
-        const next = transcodePct + (CREEP_CEIL - transcodePct) * 0.1;
-        if (next > transcodePct) {
-            transcodePct = Math.min(CREEP_CEIL, next);
-            reportTranscode(transcodePct);
+    while (s.mediaStatus === "processing") {
+        if (Date.now() - startedAt > POLL_TIMEOUT_MS) {
+            throw new Error(
+                "Media is still processing. Please check back later.",
+            );
         }
-    }, 500);
-
-    try {
-        while (s.mediaStatus === "processing") {
-            if (Date.now() - startedAt > POLL_TIMEOUT_MS) {
-                throw new Error(
-                    "Media is still processing. Please check back later.",
-                );
-            }
-            await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
-            s = await axios
-                .get(`${UPLOAD_STATUS}/${complete.jobId}`)
-                .then((r) => r.data);
-            // Honor a real backend progress value only if it's ahead of our
-            // synthetic creep (and keep it under the ceiling until "ready").
-            if (
-                typeof s.progress === "number" &&
-                s.progress > transcodePct
-            ) {
-                transcodePct = Math.min(CREEP_CEIL, s.progress);
-                reportTranscode(transcodePct);
-            }
-        }
-    } finally {
-        clearInterval(creep); // stop the creep whether we finish, fail, or throw
+        await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+        s = await axios
+            .get(`${UPLOAD_STATUS}/${complete.jobId}`)
+            .then((r) => r.data);
     }
 
     if (s.mediaStatus === "failed") {
-        throw new Error(s.error || "Transcoding failed");
+        throw new Error(s.error || "Processing failed");
     }
-    onProgress(100); // transcode finished.
+    onProgress(100);
     return { url: s.url, mediaType: start.mediaType };
 }
 

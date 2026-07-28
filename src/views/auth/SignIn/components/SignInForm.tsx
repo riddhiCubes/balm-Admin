@@ -141,7 +141,9 @@ const SignInForm = (props: SignInFormProps) => {
       let registration = await navigator.serviceWorker.getRegistration();
       if (!registration) {
         try {
-          registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+          registration = await navigator.serviceWorker.register(
+            `${import.meta.env.BASE_URL}firebase-messaging-sw.js`,
+          );
         } catch (swError) {
           console.error("Failed to register service worker for FCM:", swError);
           setFcmToken("");
