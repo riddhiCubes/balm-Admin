@@ -12,7 +12,6 @@ import { MdOutlineVideoLibrary } from 'react-icons/md'
 import { TbCircleXFilled, TbLibraryPhoto } from 'react-icons/tb'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
-import VideoPlayer from "../../../components/ui/VideoPlayer/index";
 
 type FormSchema = {
   name: string
@@ -553,24 +552,22 @@ const AddTheme = () => {
                 <Upload
                   accept="video/*"
                   draggable
-                  className="w-full min-h-[350px]"
+                  className="w-full min-h-[350px] p-3"
                   showList={false}
                   uploadLimit={1}
                   onChange={handleVideo}
                 >
                   {videoPreview ? (
                     <div
-                      className="relative z-10 w-full max-w-full h-[250px] rounded-md"
+                      className="relative z-10 w-full rounded-md"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {/* <video
-                        className=""
+                      <video
                         src={videoPreview}
                         controls
-                      // alt="image preview"
-                      /> */}
-                      <VideoPlayer
-                        videoUrl={videoPreview}
+                        controlsList="nofullscreen"
+                        preload="metadata"
+                        className="w-full max-h-[450px] object-contain rounded-md bg-black"
                       />
                       <TbCircleXFilled
                         className="absolute -top-2 -right-2 text-red-500 text-lg z-20 cursor-pointer"
