@@ -496,9 +496,21 @@ const AddTheme = () => {
                           style={{ display: 'none' }}
                           onChange={(e: any) => {
                             const file = e.target.files?.[0];
-                            if (file) {
-                              field.onChange(file);
+                            if (!file) return;
+                            // `accept="audio/*"` is only a picker hint — the user
+                            // can still pick a video via "All files". Enforce the
+                            // type here so only real audio is accepted.
+                            if (!file.type.startsWith("audio/")) {
+                              toast.push(
+                                <Notification type="danger">
+                                  Invalid file type! Please upload an audio file.
+                                </Notification>,
+                                { placement: "top-end" }
+                              );
+                              e.target.value = ""; // allow re-selecting the same file
+                              return;
                             }
+                            field.onChange(file);
                           }}
                         />
                         <div className="relative">
