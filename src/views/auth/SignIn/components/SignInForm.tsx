@@ -48,6 +48,8 @@ const SignInForm = (props: SignInFormProps) => {
         (state) => state.setSessionSignedIn,
     )
 
+    console.log("fcm token:", fcmToken);
+
     const { disableSubmit = false, className, setMessage, passwordHint } = props
 
     const {
@@ -86,6 +88,8 @@ const SignInForm = (props: SignInFormProps) => {
                 deviceToken = uuidv4();
                 localStorage.setItem("deviceToken", deviceToken);
             }
+
+            console.log( "fcmToken:", fcmToken);
 
             const body = {
                 email: email,

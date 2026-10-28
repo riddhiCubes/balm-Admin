@@ -1,4 +1,4 @@
-const BASE_URL = "http://16.170.15.140/api";
+const BASE_URL = "https://api.balmzone.com";
 
 export const LOGIN_API = BASE_URL + "/admin_login";
 
